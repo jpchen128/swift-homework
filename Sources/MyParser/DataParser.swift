@@ -12,7 +12,7 @@ public struct DataParser {
 
     // Function to parse data according to the specifications
     // It takes a string of data to parse and a callback function for output
-    // It returns a string of parsed data
+    // It returns whatever the callback function returns
     public func parseData(_ data: String, callback: OutputCallback = ndjsonOutput) async throws -> Any {
         let data = !data.last!.isNewline ? data + "\r\n" : data
         guard data.count % lineLength == 0 else {

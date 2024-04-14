@@ -82,14 +82,19 @@ struct Homework: AsyncParsableCommand {
         }
         for (fileName, task) in tasks {
             do {
-                if let output = try await task.value {
-                    let outputURL = URL(fileURLWithPath: "\(outputPath)/\(fileName).ndjson")
-                    try output.write(to: outputURL, atomically: true, encoding: .utf8)
-                    logger.info("Parsed data: \(fileName)")
+                guard let output = try await task.value else {
+                    throw MainError.runtimeError("Output string is nil")
                 }
+                let outputURL = URL(fileURLWithPath: "\(outputPath)/\(fileName).ndjson")
+                try output.write(to: outputURL, atomically: true, encoding: .utf8)
+                logger.info("Parsed data: \(fileName)")
             } catch {
                 logger.error("Error while parsing data '\(fileName)': \(error.localizedDescription)")
             }
         }
     }
+}
+
+enum MainError: Error {
+    case runtimeError(String)
 }
