@@ -1,5 +1,6 @@
 import Foundation
 
+// Error type for specs parsing
 public enum SpecsParserError: Error {
     case invalidDataType
     case invalidCSVColumnName
@@ -19,6 +20,7 @@ extension SpecsParserError: LocalizedError {
     }
 }
 
+// Error type for data parsing
 public enum DataParserError: Error {
     case invalidDataLength
     case invalidLineEnd

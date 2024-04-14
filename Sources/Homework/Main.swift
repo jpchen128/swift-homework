@@ -5,11 +5,15 @@ import Logging
 
 let logger = Logger(label: "com.example.Homework")
 
+enum MainError: Error {
+    case runtimeError(String)
+}
+
 @main
 struct Homework: AsyncParsableCommand {
     static var configuration = CommandConfiguration(
-        commandName: "Homework",
-        abstract: "A Swift command-line tool for parsing specific specs and data."
+        commandName: "homework",
+        abstract: "A command-line tool for parsing specific specs and data."
     )
 
     @Option(name: .shortAndLong, help: "The path of specs CSV files to parse.")
@@ -38,6 +42,8 @@ struct Homework: AsyncParsableCommand {
         }
     }
 
+    // Parse specs files and store DataParser objects in a dictionary, keyed by specs name
+    // Works concurrently for each file, same for the data files parsing
     func parseSpecsFiles(_ formatDataParserDict: inout [String: DataParser],
                          specsPath: String) async throws {
         let enumerator = FileManager.default.enumerator(
@@ -63,6 +69,7 @@ struct Homework: AsyncParsableCommand {
         }
     }
 
+    // Parse data files and write the parsed data to output files
     func parseDataFiles(_ formatDataParserDict: [String: DataParser],
                         dataPath: String, outputPath: String) async throws {
         let enumerator = FileManager.default.enumerator(
@@ -93,8 +100,4 @@ struct Homework: AsyncParsableCommand {
             }
         }
     }
-}
-
-enum MainError: Error {
-    case runtimeError(String)
 }

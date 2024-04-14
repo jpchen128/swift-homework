@@ -1,6 +1,8 @@
 import Foundation
 import SwiftCSV
 
+// Parsing specs in CSV string according to given specifications.
+// It returns an array of Spec.
 public func parseSpecs(_ csv: String) async throws -> [Spec] {
     let csv = try CSV<Named>(string: csv)
     guard csv.header == ["column name", "width", "datatype"] else {

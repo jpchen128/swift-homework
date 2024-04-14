@@ -2,7 +2,10 @@ import Foundation
 
 // Struct for parsing data according to given specifications
 public struct DataParser {
+    // Array of specs for the columns
     let specs: [Spec]
+
+    // Length of a line in the data
     let lineLength: Int
 
     public init(_ specs: [Spec]) {
@@ -14,11 +17,13 @@ public struct DataParser {
     // It takes a string of data to parse and a callback function for output
     // It returns whatever the callback function returns
     public func parseData(_ data: String, callback: OutputCallback = ndjsonOutput) async throws -> Any {
+        // If the data does not end with a newline, add one
         let data = !data.last!.isNewline ? data + "\r\n" : data
         guard data.count % lineLength == 0 else {
             throw DataParserError.invalidDataLength
         }
 
+        // Split data into lines with line length, and check if lines end with a newline
         let numberOfLines = data.count / lineLength
         let lines: [Substring] = try (0..<numberOfLines).map { idx in
             let lineStartIndex = data.index(data.startIndex, offsetBy: idx * lineLength)
@@ -30,6 +35,7 @@ public struct DataParser {
             return line
         }
 
+        // Parse each line and convert fields according to the specs
         let results = try lines.map { line in
             var currentStart = line.startIndex
             return try specs.map { spec in
