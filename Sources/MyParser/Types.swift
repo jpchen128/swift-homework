@@ -26,17 +26,27 @@ public struct Spec {
 }
 
 extension Spec {
-    func convert(_ data: String) -> Any {
+    func convert(_ data: String) throws -> Any {
         switch dataType {
         case .text:
             return data.trimmingCharacters(in: .whitespacesAndNewlines)
         case .boolean:
-            return data == "1"
+            switch data {
+            case "0":
+                return false
+            case "1":
+                return true
+            default:
+                throw DataParserError.invalidBooleanValue
+            }
         case .integer:
-            return Int(data.trimmingCharacters(in: .whitespacesAndNewlines))!
+            guard let int = Int(data.trimmingCharacters(in: .whitespacesAndNewlines)) else {
+                throw DataParserError.invalidIntegerValue
+            }
+            return int
         }
     }
 }
 
-public typealias RowResultType = [(String, Any)]
-public typealias OutputCallback = ([RowResultType]) throws -> String
+public typealias LineResultType = [(String, Any)]
+public typealias OutputCallback = ([LineResultType]) throws -> String

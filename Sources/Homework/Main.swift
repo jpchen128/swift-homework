@@ -37,17 +37,21 @@ struct Homework: AsyncParsableCommand {
                                                 at: URL(fileURLWithPath: specsPath),
                                                 includingPropertiesForKeys: [.isRegularFileKey],
                                                 options: [.skipsHiddenFiles])!
-            try await withThrowingTaskGroup(of: (String, DataParser).self) { taskGroup in
-                for case let csvURL as URL in csvEnumerator {
-                    let specsName = csvURL.deletingPathExtension().lastPathComponent
-                    taskGroup.addTask {
-                        let csv = try String(contentsOfFile: csvURL.path)
-                        return (specsName, DataParser(specs: try await parseSpecs(csv)))
-                    }
+            var csvTasks: [String: Task<[Spec], Error>] = [:]
+            for case let csvURL as URL in csvEnumerator {
+                let specsName = csvURL.deletingPathExtension().lastPathComponent
+                csvTasks[specsName] = Task {
+                    let csv = try String(contentsOfFile: csvURL.path)
+                    return try await parseSpecs(csv)
                 }
-                for try await (specsName, dataParser) in taskGroup {
-                    formatDataParserDict[specsName] = dataParser
+            }
+            for (specsName, task) in csvTasks {
+                do {
+                    let specs = try await task.value
+                    formatDataParserDict[specsName] = DataParser(specs)
                     logger.info("Parsed specs: \(specsName)")
+                } catch {
+                    logger.error("Error while parsing '\(specsName)': \(error.localizedDescription)")
                 }
             }
 
@@ -55,17 +59,18 @@ struct Homework: AsyncParsableCommand {
                                                 at: URL(fileURLWithPath: dataPath),
                                                 includingPropertiesForKeys: [.isRegularFileKey],
                                                 options: [.skipsHiddenFiles])!
-            var tasks: [String: Task<String, Error>] = [:]
+            var dataTasks: [String: Task<String, Error>] = [:]
             for case let dataURL as URL in dataEnumerator {
                 let fileNameWOExtension = dataURL.deletingPathExtension().lastPathComponent
                 let specsName = fileNameWOExtension.components(separatedBy: "_")[0]
-                let dataParser = formatDataParserDict[specsName]!
-                tasks[fileNameWOExtension] = Task {
-                    let data = try String(contentsOfFile: dataURL.path)
-                    return try await dataParser.parseData(data)
+                if let dataParser = formatDataParserDict[specsName] {
+                    dataTasks[fileNameWOExtension] = Task {
+                        let data = try String(contentsOfFile: dataURL.path)
+                        return try await dataParser.parseData(data)
+                    }
                 }
             }
-            for (fileName, task) in tasks {
+            for (fileName, task) in dataTasks {
                 do {
                     let output = try await task.value
                     let outputURL = URL(fileURLWithPath: "\(outputPath)/\(fileName).ndjson")
