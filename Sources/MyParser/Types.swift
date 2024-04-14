@@ -19,7 +19,7 @@ extension DataType {
     }
 }
 
-public struct Spec {
+public struct Spec: Equatable {
     let columnName: String
     let width: Int
     let dataType: DataType

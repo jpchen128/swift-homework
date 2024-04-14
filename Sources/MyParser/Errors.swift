@@ -20,7 +20,9 @@ extension SpecsParserError: LocalizedError {
 }
 
 public enum DataParserError: Error {
-    case invalidLineLength
+    case invalidDataLength
+    case invalidLineEnd
+    case unexpectedNewline
     case invalidBooleanValue
     case invalidIntegerValue
 }
@@ -28,10 +30,14 @@ public enum DataParserError: Error {
 extension DataParserError: LocalizedError {
     public var errorDescription: String? {
         switch self {
-        case .invalidLineLength:
-            return "Invalid line length."
+        case .invalidDataLength:
+            return "Data length cannot be divided by line length."
+        case .invalidLineEnd:
+            return "A line should end with a newline character."
+        case .unexpectedNewline:
+            return "Unexpected newline character in a field."
         case .invalidBooleanValue:
-            return "Invalid boolean value, not '0' or '1'."
+            return "Invalid boolean value, neither '0' nor '1'."
         case .invalidIntegerValue:
             return "Invalid integer value."
         }
