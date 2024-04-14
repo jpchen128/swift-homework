@@ -13,15 +13,15 @@ public struct DataParser {
     // Function to parse data according to the specifications
     // It takes a string of data to parse and a callback function for output
     // It returns a string of parsed data
-    public func parseData(_ data: String, callback: OutputCallback = ndjsonOutput) async throws -> String {
+    public func parseData(_ data: String, callback: OutputCallback = ndjsonOutput) async throws -> Any {
         let data = !data.last!.isNewline ? data + "\r\n" : data
         guard data.count % lineLength == 0 else {
             throw DataParserError.invalidDataLength
         }
 
         let numberOfLines = data.count / lineLength
-        let lines: [Substring] = try (0..<numberOfLines).map { i in
-            let lineStartIndex = data.index(data.startIndex, offsetBy: i * lineLength)
+        let lines: [Substring] = try (0..<numberOfLines).map { idx in
+            let lineStartIndex = data.index(data.startIndex, offsetBy: idx * lineLength)
             let lineEndIndex = data.index(lineStartIndex, offsetBy: lineLength)
             let line = data[lineStartIndex..<lineEndIndex]
             guard line.last!.isNewline else {
@@ -42,6 +42,7 @@ public struct DataParser {
                 return (spec.columnName, try spec.convert(String(field)))
             }
         }
+
         return try callback(results)
     }
 }

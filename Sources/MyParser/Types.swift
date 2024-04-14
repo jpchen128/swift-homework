@@ -49,4 +49,4 @@ extension Spec {
 }
 
 public typealias LineResultType = [(String, Any)]
-public typealias OutputCallback = ([LineResultType]) throws -> String
+public typealias OutputCallback = ([LineResultType]) throws -> Any
