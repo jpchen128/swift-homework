@@ -25,7 +25,7 @@ OPTIONS:
 ### Run Streaming Example (Experimental)
 Start server:
 ```
-python3 Sources/Streaming/stream_server.py --source data/testformat1_2021-07-06.txt
+python3 Sources/Streaming/stream_server.py --source data/testformat.txt
 ```
 Start client:
 ```
@@ -44,9 +44,9 @@ swift test
 │   ├── Homework/
 │   │   └── Main.swift                  // Basic Function Implementation.
 │   ├── MyParser/
-│   │   ├── SpecsParser.swift           // Function to parse specs in CSV string.
+│   │   ├── SpecsParser.swift           // Function to parse specs.
 │   │   ├── DataParser.swift            // Struct to parse data strings in specified format,
-│   │   |                               // with default callback to output NDJSON string.
+│   │   |                               // with default callback to output string.
 │   │   ├── Types.swift                 // Definition of spec and data type, with conversion
 │   │   |                               // methods from certain input.
 │   │   └── Error.swift                 // Error enumeration, all being catched in main func
@@ -62,8 +62,8 @@ swift test
 
 ## References
 ### Third-party Libraries Used
-Swift: [SwiftCSV](https://github.com/swiftcsv/SwiftCSV.git), [ArgumentParser](https://github.com/apple/swift-argument-parser.git), [Swift Logging](https://github.com/apple/swift-log.git), [AsyncHTTPClient](https://github.com/swift-server/async-http-client)
-Python: [Flask](https://flask.palletsprojects.com/en/3.0.x/)
+- Swift: [SwiftCSV](https://github.com/swiftcsv/SwiftCSV.git), [ArgumentParser](https://github.com/apple/swift-argument-parser.git), [Swift Logging](https://github.com/apple/swift-log.git), [AsyncHTTPClient](https://github.com/swift-server/async-http-client)
+- Python: [Flask](https://flask.palletsprojects.com/en/3.0.x/)
 
 ### Sources of Great Help
 Explore structured concurrency in Swift:
