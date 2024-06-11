@@ -1,5 +1,5 @@
 {
-  "originHash" : "092b93ae10aaaef9fa388c3b9e7f22f0fdfda35a469b916b271e227aa8d64d0f",
+  "originHash" : "983432937b4b1d2a64c4118a5a1c6eb5ad853ffb531b06b34df33715d9b986e4",
   "pins" : [
     {
       "identity" : "async-http-client",
@@ -8,6 +8,42 @@
       "state" : {
         "revision" : "fb308ee72f3d4c082a507033f94afa7395963ef3",
         "version" : "1.21.0"
+      }
+    },
+    {
+      "identity" : "async-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/vapor/async-kit.git",
+      "state" : {
+        "revision" : "7ece208cd401687641c88367a00e3ea2b04311f1",
+        "version" : "1.19.0"
+      }
+    },
+    {
+      "identity" : "console-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/vapor/console-kit.git",
+      "state" : {
+        "revision" : "9f7932f22ab6f64aafadc14491e694179b7d0f6f",
+        "version" : "4.14.3"
+      }
+    },
+    {
+      "identity" : "multipart-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/vapor/multipart-kit.git",
+      "state" : {
+        "revision" : "12ee56f25bd3fc4c2d09c2aa16e69de61dc786e8",
+        "version" : "4.6.0"
+      }
+    },
+    {
+      "identity" : "routing-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/vapor/routing-kit.git",
+      "state" : {
+        "revision" : "8c9a227476555c55837e569be71944e02a056b72",
+        "version" : "4.9.1"
       }
     },
     {
@@ -47,6 +83,15 @@
       }
     },
     {
+      "identity" : "swift-crypto",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-crypto.git",
+      "state" : {
+        "revision" : "bc1c29221f6dfeb0ebbfbc98eb95cd3d4967868e",
+        "version" : "3.4.0"
+      }
+    },
+    {
       "identity" : "swift-http-types",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-http-types",
@@ -62,6 +107,15 @@
       "state" : {
         "revision" : "e97a6fcb1ab07462881ac165fdbb37f067e205d5",
         "version" : "1.5.4"
+      }
+    },
+    {
+      "identity" : "swift-metrics",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-metrics.git",
+      "state" : {
+        "revision" : "ce594e71e92a1610015017f83f402894df540e51",
+        "version" : "2.4.4"
       }
     },
     {
@@ -134,6 +188,24 @@
       "state" : {
         "revision" : "b61dcd1b2b1120e751cee4cd64a16ff10364885d",
         "version" : "0.9.1"
+      }
+    },
+    {
+      "identity" : "vapor",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/vapor/vapor.git",
+      "state" : {
+        "revision" : "af86ea4402c65dfbe70ac1bb9fd1d3fd9501a3f6",
+        "version" : "4.96.0"
+      }
+    },
+    {
+      "identity" : "websocket-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/vapor/websocket-kit.git",
+      "state" : {
+        "revision" : "4232d34efa49f633ba61afde365d3896fc7f8740",
+        "version" : "2.15.0"
       }
     }
   ],
