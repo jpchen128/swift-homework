@@ -1,4 +1,4 @@
-name: Build Microservice and Deploy to EKS
+name: MicroService
 
 on:
   push:
@@ -17,11 +17,19 @@ jobs:
         tar -xvzf swift-5.10.1-RELEASE-ubuntu22.04.tar.gz
         export PATH=$PATH:$(pwd)/swift-5.10.1-RELEASE-ubuntu22.04/usr/bin
 
+    - name: Build Microservice and Docker image
+      run: swift build -c release --static-swift-stdlib
+
     - name: Run tests
       run: swift test
 
-    - name: Build
-      run: swift build -c release --static-swift-stdlib
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+        mask-aws-account-id: no
 
     - name: Login to Amazon ECR
       uses: aws-actions/amazon-ecr-login@v1
@@ -34,14 +42,6 @@ jobs:
       run: |
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-
-    - name: Set up Kubeconfig
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.AWS_REGION }}
-        mask-aws-account-id: no
 
     - name: Deploy to EKS
       run: |

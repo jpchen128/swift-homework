@@ -62,8 +62,9 @@ swift test
 
 ## References
 ### Third-party Libraries Used
-- Swift: [SwiftCSV](https://github.com/swiftcsv/SwiftCSV.git), [ArgumentParser](https://github.com/apple/swift-argument-parser.git), [Swift Logging](https://github.com/apple/swift-log.git), [AsyncHTTPClient](https://github.com/swift-server/async-http-client)
-- Python: [Flask](https://flask.palletsprojects.com/en/3.0.x/)
+Swift: [SwiftCSV](https://github.com/swiftcsv/SwiftCSV.git), [ArgumentParser](https://github.com/apple/swift-argument-parser.git), [Swift Logging](https://github.com/apple/swift-log.git), [AsyncHTTPClient](https://github.com/swift-server/async-http-client)
+
+Python: [Flask](https://flask.palletsprojects.com/en/3.0.x/)
 
 ### Sources of Great Help
 Explore structured concurrency in Swift:
@@ -71,4 +72,5 @@ https://developer.apple.com/videos/play/wwdc2021/10134/
 
 ### Coding Style
 Swift Style Guide from Google: https://google.github.io/swift/
+
 Linting tool: https://github.com/realm/SwiftLint
