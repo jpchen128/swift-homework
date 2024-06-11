@@ -5,7 +5,7 @@ FROM ubuntu:latest
 WORKDIR /usr/src/app
 
 # Copy the compiled executable and any other needed files from your host machine to the container
-copy .build/aarch64-unknown-linux-gnu/release/microservice Sources/MicroService/specs.csv .
+copy .build/release/microservice Sources/MicroService/specs.csv .
 
 # Make port 8080 available to the world outside this container
 EXPOSE 8080
