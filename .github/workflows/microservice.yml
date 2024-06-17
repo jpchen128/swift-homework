@@ -6,16 +6,19 @@ on:
       - main
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  build-and-deploy:
+    runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v4
 
     - name: Install swift
+      env:
+        SWIFT_VERSION: "5.10.1"
+        UBUNTU_VERSION: "20.04"
       run: |
-        wget https://download.swift.org/swift-5.10.1-release/ubuntu2204/swift-5.10.1-RELEASE/swift-5.10.1-RELEASE-ubuntu22.04.tar.gz
-        tar -xvzf swift-5.10.1-RELEASE-ubuntu22.04.tar.gz
-        export PATH=$PATH:$(pwd)/swift-5.10.1-RELEASE-ubuntu22.04/usr/bin
+        wget https://download.swift.org/swift-$SWIFT_VERSION-release/ubuntu2004/swift-$SWIFT_VERSION-RELEASE/swift-$SWIFT_VERSION-RELEASE-ubuntu$UBUNTU_VERSION.tar.gz
+        tar -xvzf swift-$SWIFT_VERSION-RELEASE-ubuntu$UBUNTU_VERSION.tar.gz
+        export PATH=$PATH:$(pwd)/swift-$SWIFT_VERSION-RELEASE-ubuntu$UBUNTU_VERSION/usr/bin
 
     - name: Resolve Swift package dependencies
       run: swift package resolve
@@ -24,17 +27,16 @@ jobs:
       uses: actions/cache@v4
       with:
         path: |
-          swift-5.10.1-RELEASE-ubuntu22.04/
           .build/
         key: ${{ runner.os }}-swift-${{ hashFiles('**/Package.resolved') }}
         restore-keys: |
           ${{ runner.os }}-swift-
 
-    - name: Build Microservice
-      run: swift build -c release --static-swift-stdlib
-
     - name: Run tests
       run: swift test -c release
+
+    - name: Build Microservice
+      run: swift build --static-swift-stdlib -c release
 
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -51,7 +53,80 @@ jobs:
       env:
         ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
         ECR_REPOSITORY: test-repo
-        IMAGE_TAG: latest
+        IMAGE_TAG: parser
       run: |
+        cat << EOF > specs.csv
+        column name,width,datatype
+        name,7,TEXT
+        age,3,INTEGER
+        EOF
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+    - name: Deploy to EKS
+      env:
+        ECR_REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+        ECR_REPOSITORY: test-repo
+        IMAGE_TAG: parser
+      run: |
+        cat << EOF > deployment.yaml
+        ---
+        apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+          namespace: ns-parser
+          name: deploy-parser
+        spec:
+          selector:
+            matchLabels:
+              app.kubernetes.io/name: app-parser
+          replicas: 3
+          template:
+            metadata:
+              labels:
+                app.kubernetes.io/name: app-parser
+            spec:
+              containers:
+              - image: $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+                imagePullPolicy: Always
+                name: app-parser
+                ports:
+                - containerPort: 80
+        ---
+        apiVersion: v1
+        kind: Service
+        metadata:
+          namespace: ns-parser
+          name: svc-parser
+        spec:
+          ports:
+            - port: 80
+              targetPort: 80
+              protocol: TCP
+          type: NodePort
+          selector:
+            app.kubernetes.io/name: app-parser
+        ---
+        apiVersion: networking.k8s.io/v1
+        kind: Ingress
+        metadata:
+          namespace: ns-parser
+          name: ingress-parser
+          annotations:
+            alb.ingress.kubernetes.io/scheme: internet-facing
+            alb.ingress.kubernetes.io/target-type: ip
+        spec:
+          ingressClassName: alb
+          rules:
+            - http:
+                paths:
+                - path: /
+                  pathType: Prefix
+                  backend:
+                    service:
+                      name: svc-parser
+                      port:
+                        number: 80
+        EOF
+        aws eks update-kubeconfig --name my-cluster --region ${{ secrets.AWS_REGION }}
+        kubectl apply -f deployment.yaml
