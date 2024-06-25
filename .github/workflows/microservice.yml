@@ -57,6 +57,7 @@ jobs:
         cat << EOF > specs.csv
         column name,width,datatype
         name,7,TEXT
+        age,3,INTEGER
         EOF
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
